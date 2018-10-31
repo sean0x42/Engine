@@ -71,6 +71,23 @@ public class Logger {
   }
 
   /**
+   * Prints a warning message.
+   * @param message Message to print.
+   */
+  public void warning(String message) {
+    print(out, "Warning: " + message);
+  }
+
+  /**
+   * Prints a warning message.
+   * @param format Message format.
+   * @param values Values to use in format string.
+   */
+  public void warning(String format, Object... values) {
+    warning(String.format(format, values));
+  }
+
+  /**
    * Print an error message.
    * @param message Message to print.
    */

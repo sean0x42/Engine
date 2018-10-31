@@ -51,9 +51,13 @@ public class Engine implements Runnable {
    */
   @Override
   public void run() {
-    window.init();
-    game.init();
-    performEngineLoop();
+    try {
+      window.init();
+      game.init();
+      performEngineLoop();
+    } finally {
+      game.cleanup();
+    }
   }
 
   /**

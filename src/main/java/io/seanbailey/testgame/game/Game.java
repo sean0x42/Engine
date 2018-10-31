@@ -43,6 +43,11 @@ public abstract class Game {
    */
   public abstract void render(Window window);
 
+  /**
+   * A method that is called whenever the game is closing to cleanly exit.
+   */
+  public abstract void cleanup();
+
   public Renderer getRenderer() {
     return renderer;
   }

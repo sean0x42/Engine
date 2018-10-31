@@ -11,11 +11,13 @@ import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
  */
 public class Renderer {
 
+  private Shader shader;
+
   /**
    * Initialises the renderer.
    */
   public void init() {
-
+    shader = new ShaderController("vertex.vs", "fragment.fs");
   }
 
   /**

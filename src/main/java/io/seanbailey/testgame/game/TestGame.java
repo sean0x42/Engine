@@ -54,4 +54,9 @@ public class TestGame extends Game {
     window.setClearColour(colour, colour, colour, 0.0f);
     getRenderer().clear();
   }
+
+  @Override
+  public void cleanup() {
+
+  }
 }
