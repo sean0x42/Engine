@@ -46,17 +46,12 @@ public class TestGame extends Game {
   
   @Override
   public void render(Window window) {
-    if (window.isResized()) {
-      glViewport(0, 0, window.getWidth(), window.getHeight());
-      window.setResized(false);
-    }
-
     window.setClearColour(colour, colour, colour, 0.0f);
-    getRenderer().clear();
+    getRenderer().render(window);
   }
 
   @Override
   public void cleanup() {
-
+    getRenderer().cleanup();
   }
 }

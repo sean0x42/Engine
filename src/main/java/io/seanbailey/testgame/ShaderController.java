@@ -2,6 +2,7 @@ package io.seanbailey.testgame;
 
 import io.seanbailey.testgame.util.Logger;
 import io.seanbailey.testgame.util.ResourceUtils;
+import java.io.IOException;
 
 import static org.lwjgl.opengl.GL20.*;
 
@@ -32,8 +33,14 @@ public class ShaderController {
     }
 
     // Create shaders
-    createVertexShader(ResourceUtils.loadAsString("/" + vertexPath));
-    createFragmentShader(ResourceUtils.loadAsString("/" + fragmentPath));
+    try {
+      createVertexShader(ResourceUtils.loadAsString("/" + vertexPath));
+      createFragmentShader(ResourceUtils.loadAsString("/" + fragmentPath));
+    } catch (IOException exception) {
+      exception.printStackTrace();
+      throw new RuntimeException("IO exception encountered");
+    }
+
     link();
   }
 
