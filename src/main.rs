@@ -1,17 +1,24 @@
-extern crate gl;
 extern crate sdl2;
+extern crate gl;
+#[macro_use] extern crate failure;
 
 pub mod resources;
 pub mod render_gl;
 
+use failure::err_msg;
 use resources::Resources;
 use std::path::Path;
 
 fn main() {
-    // Init
+    if let Err(e) = run() {
+        println!("{}", failure_to_string(e));
+    }
+}
+
+fn run() -> Result<(), failure::Error> {
     let resources = Resources::from_relative_exe_path(Path::new("assets")).unwrap();
-    let sdl = sdl2::init().unwrap();
-    let video_subsystem = sdl.video().unwrap();
+    let sdl = sdl2::init().map_err(err_msg)?;
+    let video_subsystem = sdl.video().map_err(err_msg)?;
     
     // Additional OpenGL context setup
     let gl_attr = video_subsystem.gl_attr();
@@ -23,14 +30,13 @@ fn main() {
         .window("Game Engine", 900, 700)
         .resizable()
         .opengl()
-        .build()
-        .unwrap();
+        .build()?;
 
-    let _gl_context = window.gl_create_context().unwrap();
+    let _gl_context = window.gl_create_context().map_err(err_msg)?;
     let gl = gl::Gl::load_with(|s| video_subsystem.gl_get_proc_address(s) as *const std::os::raw::c_void);
 
     // Set up shader program
-    let shader_program = render_gl::Program::from_resource(&gl, &resources, "shaders/triangle").unwrap();
+    let shader_program = render_gl::Program::from_resource(&gl, &resources, "shaders/triangle")?;
 
     // Set up VBO
     let vertices: Vec<f32> = vec![
@@ -97,7 +103,7 @@ fn main() {
     }
 
     // Receive window events
-    let mut event_pump = sdl.event_pump().unwrap();
+    let mut event_pump = sdl.event_pump().map_err(err_msg)?;
     'main: loop {
         for event in event_pump.poll_iter() {
             match event {
@@ -119,4 +125,31 @@ fn main() {
 
         window.gl_swap_window();
     }
+
+    Ok(())
+}
+
+pub fn failure_to_string(e: failure::Error) -> String {
+    use std::fmt::Write;
+
+    let mut result = String::new();
+
+    for (i, cause) in e.iter_chain().collect::<Vec<_>>().into_iter().rev().enumerate() {
+        if i > 0 {
+            let _ = writeln!(&mut result, "   Which cause the following issue:");
+        }
+        let _ = write!(&mut result, "{}", cause);
+        if let Some(backtrace) = cause.backtrace() {
+            let backtrace_str = format!("{}", backtrace);
+            if backtrace_str.len() > 0 {
+                let _ = writeln!(&mut result, " This happened at {}", backtrace);
+            } else {
+                let _ = writeln!(&mut result);
+            }
+        } else {
+            let _ = writeln!(&mut result);
+        }
+    }
+
+    result
 }
