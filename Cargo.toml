@@ -1,0 +1,14 @@
+[package]
+name = "engine"
+version = "0.1.0"
+authors = ["Sean Bailey <sean@seanbailey.io>"]
+
+[dependencies]
+gl = { path = "lib/gl" }
+sdl2 = "0.31.0"
+
+[build-dependencies]
+walkdir = "2.2.7"
+
+[features]
+gl_debug = ["gl/debug"]
